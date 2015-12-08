@@ -1,0 +1,10 @@
+2015-12-8
+Hello word to study linux
+Linux need write more logs since it's doc so much, but, not well organized like windows MSDN.
+More detial need self save and keep record. 
+En, a little bit slowly, but, not bad.:(
+
+Put one good learning website link here:
+
+http://blog.chinaunix.net/uid-25014876-id-59415.html
+http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
