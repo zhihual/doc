@@ -117,6 +117,362 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 Website for US news
 http://www.sandiegouniontribune.com/news/2015/dec/04/qualcomm-irwin-jacob-uscd-mollenkopf/
 
+2015-12-10
+
+用户 可以把所有的代码编译进内核，但是这样会引起两个问题：一是内核过大；二是 当需要添加或者删除内核时，需要重新再编译内核。所以有了内核模块的概念。 模块并不编译到内核中，编译后存放在指定的目录，当需要使用时动态加载
+
+printk与printf的用法是差不多的，最大的区别就是printk可以指定打印的优先 级。另外一个区别就是，printf只用在用户态，printk用于内核态。
+
+printk("hello world!\n");
+printk("<0>" "hello world! 0\n");
+
+1 #define KERN_EMERG "<0>" /* system is unusable */
+92 #define KERN_ALERT "<1>" /* action must be taken immediately */
+93 #define KERN_CRIT "<2>" /* critical conditions */
+94 #define KERN_ERR "<3>" /* error conditions */
+95 #define KERN_WARNING "<4>" /* warning conditions */
+96 #define KERN_NOTICE "<5>" /* normal but significant condition */
+97 #define KERN_INFO "<6>" /* informational */
+98 #define KERN_DEBUG "<7>" /* debug-level messages */
+
+47 /* printk's without a loglevel use this.. */
+48 #define DEFAULT_MESSAGE_LOGLEVEL 4 /* KERN_WARNING */
+
+Mandatory 
+23 module_init(test_init);
+24 module_exit(test_exit);
+25
+26 MODULE_LICENSE("GPL");
+27 MODULE_AUTHOR("xiao bai");
+28 MODULE_onsole_loglevel
+
+
+[root: /]# cat /proc/sys/kernel/printk
+7 4 1 7
+7 4 1 7分别是：
+7：console_loglevel	//这个就是控制台的默认优先级
+4：default_message_loglevel	// 这个是printk的默认输出优先级
+1：minimum_console_level
+7：default_console_loglevel
+
+
+4 4 1 7
+
+
+module_param(name, type, perm)
+name：内核参数的名称，自己定义；
+type：内核参数的类型，常见的类型byte、short、int、long、ulong、bool 、charp(字符指针);
+perm：内核参数的权限S_IRUGO(对模块参数具有读权限)。其实权限和文件的 权限差不多，具体可以查看"include/linux/stat.h"。
+
+int a=0;
+module_paaram(a, int, 0644);
+
+使用命令：insmod xxx.ko a=1
+如果加载模块时不指定参数，模块会使用默认值0，否则会使用1
+
+
+21 module_param(num, int, 0644);
+22 module_param(name, charp, 0644);
+
+
+导出符号表是指，在定义一个函数后，在模块中使用语句"EXPORT_SYMBOL(xxxxx)" 将函数导出。通过这样，内核就知道了该函数和在内存中对应的地址，这样模块 就可以调用导出的函数了。在"/proc/kallsyms"文件中对应这符号表，它记录了函数的符号和函数在内存所在的地址。
+
+
+最终会生成两个文件，一个是core目录下的haha.ko，一个是driver目录下的 test.ko。这两个文件的加载也要讲究顺序。
+如果先加载test.ko的话会出错：
+
+加载了test.ko时，haha模块产生了变化，如果卸载的时候先卸载haha 是不可以的，因为它还被人引用，必须先卸载test。
+
+1)字符设备：在今后的接触的大多数都是字符设备，我也只学过这个。
+2)块设备 ：与硬盘相关的设备。
+3)网络设备：与网络相关的设备。
+
+
+设备号由主设备号和次设备号组成。linux下，一切设备皆文件，所有的设备都能在/dev目录下找到相应的文件。这些文件除了名字不一样以外，还每个设备文件都有不一样的设备号
+
+在内核中，设备号用dev_t类型表示：
+/*include/linux/coda.h*/
+75 typedef unsigned long u_long;
+..............
+79 typedef u_long dev_t;
+
+/*/include/linux/kdev_t.h*/
+4 #define MINORBITS 20
+5 #define MINORMASK ((1U << MINORBITS) - 1)
+6
+7 #define MAJOR(dev) ((unsigned int) ((dev) >> MINORBITS))
+8 #define MINOR(dev) ((unsigned int) ((dev) & MINORMASK))
+9 #define MKDEV(ma,mi) (((ma) << MINORBITS) | (mi))
+
+ls -l /dev/
+
+在驱动函数中，加载函数至少要执行两步的操作：
+1)设备号的申请，让内核分配一个设备号给设备驱动，申请后最直接的效果就是在/proc/devices目录下能够查看到，具体能看到什么下面会说。
+2)设备的注册，让内核知道用什么函数来操作设备。
+
+上面的一个函数就实现了两个功能：
+1)为驱动程序分配了一个设备号。
+2)通过了file_operations告诉了内核能够用操作驱动的函数。
+
+
+5 unsigned int major = 253;	//定义设备号
+6 struct file_operations test_fops;	//定义文件操作的结构体
+
+10 register_chrdev(major, "test_driver", &test_fops);
+
+撇开文件操作结构体不说，效果是出来了，当调用命令"cat proc/devices"时显示了我申请的设备号253，显示的名字是"test_driver"。还有我们看不到的是，注册成功后，一个在内核中维护设备号和文件操作结构体file_operations的表添加了一项对应关系，这样内核就知道了这个设备号的驱动是用什么样的函数操作。
+
+对应的，模块卸载时需要把设备号注销：
+
+
+谨记，无论使用上面的哪种方式申请注册号，在模块卸载时都要释放设备号
+void unregister_chrdev_region(dev_t from, unsigned count)
+使用：释放从from开始count个设备号。
+void unregister_chrdev(unsigned int major, const char *name)
+
+QMSK
+
+/*/include/linux/cdev.h*/
+12 struct cdev {
+13 struct kobject kobj;
+14 struct module *owner;	//一般初始化为THIS_MODULE
+15 const struct file_operations *ops;	//文件操作结构体
+16 struct list_head list;
+17 dev_t dev;	//设备号
+18 unsigned int count;	//添加的设备个数
+19 };
+
+1)分配cdev；
+2)初始化cdev；
+3)添加cdev；
+
+方法一：直接定义：
+struct cdev test_cdev;
+方法二：调用函数:struct cdev* cdev_alloc(void)
+struct cdev* test_cdev;
+test_cdev = cdev_alloc();
+
+3.2.2初始化cdev：
+将文件操作结构体添加到cdev中：
+void cdev_init(struct cdev *cdev, const struct file_operations *fops)
+参数：
+cdev：之前我定义的cdev结构体；
+fops：设备对应的文件操作结构体。
+返回值：(函数有可能失败，查看返回值是必须的)
+成功返回0，示范返回对应的错误码
+
+加载模块：
+1）申请一个设备号，下面注册设备时需要用。
+2）注册设备。
+2.1分配一个cdev结构体。
+2.2初始化cdev结构体，使结构体与文件操作结构体(fops)对应起关系。
+2.3添加cdev结构体到内核。
+卸载模块：
+1)注销设备，即从内核中删除指定的cdev。
+2)注销设备号。
+
+一、文件操作结构体file_operations
+struct file_operations {
+1311 struct module *owner;
+1312 loff_t (*llseek) (struct file *, loff_t, int);
+1313 ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
+1314 ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
+1315 ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
+1316 ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
+1317 int (*readdir) (struct file *, void *, filldir_t);
+1318 unsigned int (*poll) (struct file *, struct poll_table_struct *);
+1319 int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long);
+1320 long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+1321 long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+1322 int (*mmap) (struct file *, struct vm_area_struct *);
+1323 int (*open) (struct inode *, struct file *);
+1324 int (*flush) (struct file *, fl_owner_t id);
+1325 int (*release) (struct inode *, struct file *);
+1326 int (*fsync) (struct file *, struct dentry *, int datasync);
+1327 int (*aio_fsync) (struct kiocb *, int datasync);
+1328 int (*fasync) (int, struct file *, int);
+1329 int (*lock) (struct file *, int, struct file_lock *);
+1330 ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
+1331 unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
+1332 int (*check_flags)(int);
+1333 int (*flock) (struct file *, int, struct file_lock *);
+1334 ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
+1335 ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned i nt);
+1336 int (*setlease)(struct file *, long, struct file_lock **);
+1337 };
+
+
+二、内核中的memcpy---copy_from_user和copy_to_user：
+
+
+下面用用file_operations中的read和write模拟两件事：
+1)从内核态通过read函数读取数据到用户态。
+2)从用户态通过write函数读取数据到内核态。
+
+驱动函数：ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
+与用户层的read对应：ssize_t read(int fd, void *buf, size_t count);
+
+int (*ioctl) (struct inode * node, struct file *filp, unsigned int cmd, unsigned long arg)
+
+
+一个cmd被分为了4个段，每一段都有各自的意义，cmd的定义在据大小
+
+
+
+
+
+ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
+与用户层的write对应：ssize_t write(int fd, const void *buf, size_t count);
+
+static inline unsigned long __must_check copy_to_user(void __user *to, const void *from, unsigned long n)
+static inline unsigned long __must_check copy_from_user(void *to, const void __user *from, unsigned long n)
+
+\\10.231.198.24\wifi\WiFi_WHQL_Test\WHQL_tool\window7_dump\x64 --win7 dump patch
+
+
+1)struct file
+在内核中，file结构体是用来维护打开的文件的。每打开一次文件，内核空间里就
+会多增加一个file来维护，当文件关闭是释放。
+所以，在内核中可以存在同一个文件的多个file，因为该文件被应用程序打开被打
+开。
+
+
+2)struct inode
+这个结构体是用来保存一个文件的基本信息的结构体，即使打开多个相同的文件，也只会有一个对应的inode。
+它也有两个常用的成员：
+
+
+1)封装了一个结构体。
+2)open函数要获得结构体并存放到private_data中。
+3)read和write函数成功后要更新cur_size这个值。
+
+
+既然内核这样定义cmd，就肯定有方法让用户方便定义：
+_IO(type,nr)	//没有参数的命令
+_IOR(type,nr,size)	//该命令是从驱动读取数据
+_IOW(type,nr,size)	//该命令是从驱动写入数据
+_IOWR(type,nr,size)	//双向数据传输
+上面的命令已经定义了方向，我们要传的是幻数(type)、序号(nr)和大小(size)。在这里szie的参数只需要填参数的类型，如int，上面的命令就会帮你检测类型的正确然后赋值sizeof(int)。
+
+有生成cmd的命令就必有拆分cmd的命令：
+_IOC_DIR(cmd)	//从命令中提取方向
+_IOC_TYPE(cmd)	//从命令中提取幻数
+_IOC_NR(cmd)	//从命令中提取序数
+_IOC_SIZE(cmd)	//从命令中提取数据大小
+
+一般会有两种的传参方法：
+1)整数，那可是省力又省心，直接使用就可以了。
+2)指针，通过指针的就传什么类型都可以了，当然用起来就比较烦。
+
+二、阻塞型IO的实现：
+
+/*linux/wait.h*/
+50 struct __wait_queue_head {
+51 spinlock_t lock;	//这个是自旋锁，在这里不需要理会。
+52 struct list_head task_list;	//这就是队列头中的核心，链表头。
+53 };
+54 typedef struct __wait_queue_head wait_queue_head_t;
+
+wait_queue_head_t test_queue; //1、定义等待队列头
+
+49 /*休眠*/
+50 P_DEBUG("read data.....\n");
+51 if(wait_event_interruptible(dev->test_queue, dev->cur_size > 0))
+52 return - ERESTARTSYS;
+
+77 /*唤醒*/
+78 wake_up_interruptible(&dev->test_queue);
+
+
+118 /*初始化等待队列头，注意函数调用的位置*/
+119 init_waitqueue_head(&my_dev.test_queue);
+
+
+5.阻塞型IO实现 
+
+定义并初始化队列头有两种方法：
+1）静态定义并初始化，一个函数执行完两个操作。省力又省心。
+DECLARE_WAIT_QUEUE_HEAD(name)
+使用：定义并初始化一个叫name的等待队列。
+2）分开两步执行。
+2.1）定义
+wait_queue_head_t test_queue;
+2.2）初始化
+init_waitqueue_head(&test_queue);
+
+
+6. 非阻塞型操作的实现
+
+实现非阻塞操作也很简单，判断filp->f_flags中的是否存在O_NONBLOCK标志（标志在定义，并被自动包含），如果有就返回-EAGAIN。
+
+49 if(filp->f_flags & O_NONBLOCK)
+50 return - EAGAIN;
+
+获得当前正在进行的进程进程描述符也很简单，使用全局项current就可以获得。
+/*4th_mutex/4th_mutex_1/1st/test.c*/
+113 P_DEBUG("[%s]:pid[%d]\n", current->comm, current->pid);
+
+1）TASK_RUNNING（运行）：该状态出现在进程正在运行，或者已经放在运行队列中等待执行（对应操作系统原理上所说的就绪状态）。这里要注意的是等待执行和休眠是两码事。
+2）TASK_INTERRUPTIBLE（可中断休眠）：这就是休眠状态中一种，之所以说可中断，就是说除了可以被其他进程从等待队列唤醒以外，还可以接送到信号而唤醒，这是常用的休眠状态。
+3）TASK_UNINTERRUPTIBLE（不可中断休眠）：这就是休眠状态的另一种，只能从等待队列被唤醒。因为它如此霸道，所以很少有人使用。
+4）TASK_ZOMBIE（僵死）：这种情况出现在进程结束后，但父进程还有来回收该进程的进程描述符。
+5）TASK_STOPPED（停止）：一看就知道，进程停止执行
+
+
+四、进程的创建
+进程的创建一般分两步：
+
+1、调用fork()：
+
+在不修改资源的情况下，fork()的实际开销就两样：
+1）复制父进程的页表给子进程。大家应该都知道，linux内存管理使用的页式管理，只要也就是说，只要把父进程的页表复制给子进程，子进程就能在页表中找到与父进程共享的4G虚拟地址了。
+2）为子进程创建唯一的进程描述符。这个就不用解释了，进程与进程描述符是一一对应的。
+
+fork具体调用的什么函数我就不详细说了，不过应该有这样的一个概念：
+fork->clone->do_fork()->copy_procrss：
+
+fork()系统调用根据提供的参数调用clone()，然后clone()去调用do_fork()，其中do_fork中完成了创建的大部分操作，里面有一个主要的函数copy_process()。
+
+
+2、调用exec()：
+一般的，创建的子进程都不是为了完成父进程中的任务，而是需要执行新的任务。exec()的作用就是读取可执行文件并加载到地址空间开始运行，可以类比成命令”./xxxxx”。如果fork()后子进程调用exec()执行新的代码，就不需要拷贝父进程的资源了。所以，一般fork()之后都是子进程先运行。
+
+7.异步通知fasync 
+
+其实就三个步骤：
+1）signal(SIGIO, sig_handler);
+调用signal函数，让指定的信号SIGIO与处理函数sig_handler对应。
+2）fcntl(fd, F_SET_OWNER, getpid());
+指定一个进程作为文件的“属主(filp->owner)”，这样内核才知道信号要发给哪个进程。
+3）f_flags = fcntl(fd, F_GETFL);
+fcntl(fd, F_SETFL, f_flags | FASYNC);
+在设备文件中添加FASYNC标志，驱动中就会调用将要实现的test_fasync函数。
+三个步骤执行后，一旦有信号产生，相应的进程就会收到
+
+简单来说，select这个系统调用的作用就是在应用层调用驱动函数中的poll来检测指定的文件的状态（读、写和异常）。如果某个状态满足，select函数调用成功后返回，应用程序就可以通过指定的函数来判断现在的文件状态。注意的是：select可以指定判断的时间，指定时间内，应用程序会阻塞在select函数，直到状态满足或者超时。
+
+对应设备的状态，返回相应的掩码。那就是说，如果设备可读，那就返回可读的掩码。
+什么是掩码？有什么掩码？
+掩码
+含义
+POLLIN
+设备可读。
+POLLRDNORM
+数据可读。一般的，驱动可读，返回(POLLIN|POLLRDNORM)，当然，只返回POLLIN也行，因为意思其实都可不多
+POLLOUT
+设备可写
+POLLWRNORM
+数据可写。一般的，驱动可写，返回(POLLOUT|POLLWRNORM)，当然，只返回POLLOUT也行，因为意思其实都可不多
+
+
+
+
+
+
+
+
+
+
 
 
 
