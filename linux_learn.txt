@@ -46,6 +46,7 @@ git log --pretty=oneline
 git reflog
 git reset --hard commit_id
 
+我使用git commit --amend已经push过的可以改last commit comment
 
 第一次修改 -> git add -> 第二次修改 -> git commit
 
