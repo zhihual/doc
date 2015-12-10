@@ -469,13 +469,35 @@ POLLWRNORM
 
 
 
+2015-12-10 10:48 
+Start to find or write one linux driver sample with application test code.
+
+Target to learn app and driver basic coding style
+
+. URL about sample link
+http://stackoverflow.com/questions/2142598/where-can-i-find-sample-source-files-for-linux-device-drivers-third-edition
+http://www.linux.org/threads/the-linux-kernel-drivers.4205/
+http://www.codeproject.com/Articles/112474/A-Simple-Driver-for-Linux-OS
 
 
 
+¡­or create a new repository on the command line
+
+echo # sampledrv >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/zhihual/sampledrv.git
+git push -u origin master
+¡­or push an existing repository from the command line
 
 
+git remote add origin https://github.com/zhihual/sampledrv.git
+git push -u origin master
+¡­or import code from another repository
 
+You can initialize this repository with code from a Subversion, Mercurial, or TFS project.
 
-
-
+git remote -v
+and git remote rm can remove cached URL link
 
