@@ -501,3 +501,32 @@ You can initialize this repository with code from a Subversion, Mercurial, or TF
 git remote -v
 and git remote rm can remove cached URL link
 
+https://github.com/zhihual/sampledrv.git
+
+Finally find kernel headfile path
+/lib/modules/$(KERNELDIR)/build M=$(PWD) modules  /usr/src/linux-headers-3.10.0+
+
+
+http://blog.csdn.net/henni386/article/details/7442872   introduce on syslog
+
+cat /proc/kmsg?
+
+2015/12/11
+
+Linux操作系统中模块操作相关命令解释
+lsmod? 查看已经安装好的模块， 也可以查看/proc/modules文件的内容. 实际上,lsmod读命令就是通过查看/proc/modules的内容来显示模块信息的.
+modinfo 显示模块信息
+modprobe? 不需要指定路径，它会到默认路径下寻找模块。模块也存在依赖性问题: 比如你要加载msdos.ko, 需要先加载fat.ko. modprobe查看/lib/module/version/modules.dep得知模块的依赖关系
+rmmod 卸载模块，但是内核会认为卸载模块不安全，可以添加命令强制卸载。
+depmod 检查系统中模块之间的依赖关系，并把依赖关系信息存于/lib/modules/2.6.18-1.2798/modules.dep中。 一般加载模块后，要命令行下先执行 depmod -a后，在系统加载模块时候会查看modules.dep中模块依赖及路径信息，这样子才可以成功加载需要模块。
+insmod 加载模块，需要指定完整的路径和模块名字。
+
+坑爹的编译器，一个moudle宏大字母没写对，编译通过，可以加载，就是不调入口函数。坑了爹两个小时
+
+在/etc/vim/vimrc 里面把dark background 打开，显示效果就会很好
+
+gcc -C app.c -o apip can make one simple application
+
+mknod /dev/hello c 247 0  2 hours knowledge
+
+
