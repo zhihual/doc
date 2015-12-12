@@ -35,3 +35,16 @@ u → undo
 
 nyw copy 1个word
 
+set number 可以显示行号
+
+G 文件底部
+
+gg 文件顶部
+
+ctl+f 上翻
+
+ctl+b 下翻
+
+移到行首是 0, 行尾是$
+
+Ctrl+S在Linux里，是锁定屏幕的快捷键。如果要解锁，按下Ctrl+Q就可以了
