@@ -1,0 +1,4 @@
+2015-12-15
+
+PDOT11_PHY_ATTRIBUTES  to register MPDU size
+NdisMSetMiniportAttributes to indicate wifi adpater caps
