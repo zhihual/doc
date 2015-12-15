@@ -530,3 +530,21 @@ gcc -C app.c -o apip can make one simple application
 mknod /dev/hello c 247 0  2 hours knowledge
 
 
+2015-12-12
+
+切换到root
+sudo passwd root 就可以设置root密码了
+
+smba setup
+1. apt-get installer samba
+2. vim /etc/samb/smb.conf
+3. smbpassword -a username
+4. service smbd restart  
+OK, done!
+
+为毛搞状况，搞一个多小时
+
+为啥故意把module搞挂，系统不会完全挂掉？
+
+找头文件
+grep copy_to_user * -R | grep int > search_result 
