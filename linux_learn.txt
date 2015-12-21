@@ -5,7 +5,8 @@ More detial need self save and keep record.
 En, a little bit slowly, but, not bad.:(
 
 Put one good learning website link here:
-
+http://blog.jobbole.com/25877/
+http://www.tutorialspoint.com/unix_system_calls/getpid.htm  linux command
 http://blog.chinaunix.net/uid-25014876-id-59415.html
 http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
 
@@ -108,7 +109,7 @@ Ignore files
 在Git工作区的根目录下创建一个特殊的.gitignore文件
 忽略某些文件时，需要编写.gitignore；
 
-git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s%Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 配置Git的时候，加上--global是针对当前用户起作用的，如果不加，那只针对当前的仓库起作用。
 配置文件放哪了？每个仓库的Git配置文件都放在.git/config文件中：
@@ -548,3 +549,91 @@ OK, done!
 
 找头文件
 grep copy_to_user * -R | grep int > search_result 
+
+ping ip -l 30000 可以用来发大包
+
+12-17
+
+登录linux seriver的时候遇到问题Publick key denny.   
+可以在/var/log/auth.log去查找 security 方面的log
+
+sudo 会把账户切到root,变量应该也切过去，所以要注意。
+
+
+git cherry-pick用于把另一个本地分支的commit修改应用到当前分支。
+
+HEAD names the commit on which you based the changes in the working tree.
+FETCH_HEAD records the branch which you fetched from a remote repository with your last git fetch invocation.
+ORIG_HEAD is created by commands that move your HEAD in a drastic way, to record the position of the HEAD before their operation, so that you can easily change the tip of the branch back to the state before you ran them.
+MERGE_HEAD records the commit(s) which you are merging into your branch when you run git merge.
+CHERRY_PICK_HEAD records the commit which you are cherry-picking when you run git cherry-pick.
+
+HEAD 里面其实存了一个指针
+
+git fetch ssh:: && git checkout FETCH_HEAD  // fetch then, make fetch_head as workspace  
+git fetch ssh:: && git cherry-pick  FETCH_HEAD // fetch another branch, then, merge the commit into workspace.  FETCH_HEAD in two command are changed twices.
+
+history -- linux command to save log
+
+.vim/log save the log which impact brach.
+
+/home/zliu/.vnc/xstartup change resoution. 
+
+vncserver - ill can destory session
+
+getpid, getppid - get process identification
+
+signal()函数理解
+在<signal.h> 这个头文件中。
+signal（参数1，参数2）；
+参数1：我们要进行处理的信号。系统的信号我们可以再终端键入 kill -l查看(共64个)。其实这些信号时系统定义的宏。
+参数2：我们处理的方式（是系统默认还是忽略还是捕获）。
+
+UDEV 通过查找 /lib/modules/uname-r /modules.alias 知道设备名。 还是通过HW ID来查找的。
+
+在模块安装的时候，depmod会根据模块中的rtl8139_pci_tbl的信息，生成下面的信息，保存到/lib/modules/uname-r /modules.alias 文件中，其内容如下：
+/var/log/syslog
+/lib/udev/rules.d // find rules here
+/etc/udev/udev.conf // change udev output level
+
+/lib/modules/uname -r/modules.alias // looking for moudle name
+
+http://blog.sina.com.cn/s/blog_46c4c6ce0100wgtj.html   netlink kernel message handle. 
+
+http://man.linuxde.net/modprobe linux command user guide
+
+http://blog.csdn.net/haomcu/article/details/7371835 netlink guide
+
+
+Build WLAN host
+? USB-x86 32bit Build Command:
+make CONFIG_ROME_IF=usb
+
+WPA Supplicant
+
+wpa_supplicant -d -Dwext -i wlan0 -c /data/misc/wifi/wpa_supplicant.conf -t -d /data/misc/wifi/log.txt
+
+https://pip.pypa.io/en/stable/installing/#install-pip
+
+download get-pip.py
+
+run as administrator in cmdline
+
+python get-pip.py
+
+pip list will show you pip status
+
+install http://pandas.pydata.org/
+
+
+http://hao.199it.com/jrsj.html  大金融数据
+
+Install anaconda
+
+pip install tushare
+
+Ok, tushare is running now...
+
+KMSpico win10 office 2013 active solution tool
+
+
