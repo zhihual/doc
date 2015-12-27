@@ -636,4 +636,28 @@ Ok, tushare is running now...
 
 KMSpico win10 office 2013 active solution tool
 
+12/27
+
+How to insall chinese language in ubuntu 14.04
+step1 find googlepinyin engine for ibus in unbuntu software center and install
+after stpe 2, looks no hint in explore. try to reboot
+
+
+after reboot, looks can't enable, stop here, and keep investigation
+
+change termial profile and background successfully.  Just in edit and change default profile
+Cool!
+
+How to mount and unmount?  This is one open question.
+
+Setup tushare envirmont. 3rd time
+
+step 1. install since tool set by script +x
+step 2. pip install tushare. note: maybe need restart terminal to invole new path
+step 3. done!
+
+if installed complete, just enter phyton enviorment and import tushare as ts,
+
+then, you can use ts command to get data
+
 
