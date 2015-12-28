@@ -660,4 +660,21 @@ if installed complete, just enter phyton enviorment and import tushare as ts,
 
 then, you can use ts command to get data
 
+12/18 
+step 1
+try to build fw
+note: already setup ftp servier. can use this to transfer files
+
+!ls is one ftp server, which can check local file
+
+filezila is one free ftp tool
+
+build fw success. cool! replacement in windows, all running
+
+replace firmware in /lib/firmware, and insmod in linux enviorment. done. OK!
+
+
+step 2, setup git enviorment
+
+
 
