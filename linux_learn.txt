@@ -636,7 +636,72 @@ Ok, tushare is running now...
 
 KMSpico win10 office 2013 active solution tool
 
+<<<<<<< HEAD
 12/22
+=======
+12/27
+
+How to insall chinese language in ubuntu 14.04
+step1 find googlepinyin engine for ibus in unbuntu software center and install
+after stpe 2, looks no hint in explore. try to reboot
+
+
+after reboot, looks can't enable, stop here, and keep investigation
+
+change termial profile and background successfully.  Just in edit and change default profile
+Cool!
+
+How to mount and unmount?  This is one open question.
+
+Setup tushare envirmont. 3rd time
+
+step 1. install since tool set by script +x
+step 2. pip install tushare. note: maybe need restart terminal to invole new path
+step 3. done!
+
+if installed complete, just enter phyton enviorment and import tushare as ts,
+
+then, you can use ts command to get data
+
+12/18 
+step 1
+try to build fw
+note: already setup ftp servier. can use this to transfer files
+
+!ls is one ftp server, which can check local file
+
+filezila is one free ftp tool
+
+build fw success. cool! replacement in windows, all running
+
+replace firmware in /lib/firmware, and insmod in linux enviorment. done. OK!
+
+
+step 2, setup git enviorment
+
+Done. Should use git before first build. 
+Add ignore file can make git after build finished.
+
+Tiger captured LE logs. which confirm our expecation
+
+Step3 :  check FW bundle, possilbe to add debug message.
+How to enable fw log in linux?
+
+Look at ini config file, we can see how to enable
+
+Rx bundle
+
+   1. receive message,  get max bundle rx
+
+12/30
+
+USB bundle doesn't set flag
+Max bundle number is 8
+need more to make package bundled
+
+
+
+
 
 netdevice.h
 wext.h --> define IOCTL of linux driver
