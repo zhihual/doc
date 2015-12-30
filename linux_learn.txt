@@ -636,4 +636,73 @@ Ok, tushare is running now...
 
 KMSpico win10 office 2013 active solution tool
 
+12/22
 
+netdevice.h
+wext.h --> define IOCTL of linux driver
+wireless -> define API of linux driver
+iw_hander-> start point of API and IOCTL 
+
+
+wlan_hdd_wext.c is the HDD layer main function.
+
+netlink: wlan_nlink_common.h  looks netlink is one socket interface
+
+nl_srv_register
+
+step 1: define netlink_kernel_cfg cfg
+step 2: call netlink_kernel_create to hook netlink socket
+
+end: call netlink_kernel_release to release netlink socket
+
+nl_srv_rcv is to get message
+
+nl_srv_ucast and nl_srv_bcast use netlink_unicast, netlink_broadcast to send message
+
+lwan_nlink_common.h define netlink message 
+http://www.cnblogs.com/iceocean/articles/1594195.html
+
+in current code, looks use this as BTC event indication
+
+Netlink 是一种在内核与用户应用间进行双向数据传输的非常好的方式，用户态应用使用标准的 socket API 就可以使用 netlink 提供的强大功能，内核态需要使用专门的内核 API 来使用 netlink。
+
+1，为了使用 netlink，用户仅需要在 include/linux/netlink.h 中增加一个新类型的 netlink 协议定义即可， 如 #define NETLINK_MYTEST 17 然后，内核和用户态应用就可以立即通过 socket API 使用该 netlink 协议类型进行数据交换。但系统调用需要增加新的系统调用，ioctl 则需要增加设备或文件， 那需要不少代码，proc 文件系统则需要在 /proc 下添加新的文件或目录，那将使本来就混乱的 /proc 更加混乱。
+
+2. netlink是一种异步通信机制，在内核与用户态应用之间传递的消息保存在socket缓存队列中，发送消息只是把消息保存在接收者的socket的接 收队列，而不需要等待接收者收到消息，但系统调用与 ioctl 则是同步通信机制，如果传递的数据太长，将影响调度粒度。
+
+3．使用 netlink 的内核部分可以采用模块的方式实现，使用 netlink 的应用部分和内核部分没有编译时依赖，但系统调用就有依赖，而且新的系统调用的实现必须静态地连接到内核中，它无法在模块中实现，使用新系统调用的应用在编译时需要依赖内核。
+
+4．netlink 支持多播，内核模块或应用可以把消息多播给一个netlink组，属于该neilink 组的任何内核模块或应用都能接收到该消息，内核事件向用户态的通知机制就使用了这一特性，任何对内核事件感兴趣的应用都能收到该子系统发送的内核事件，在 后面的文章中将介绍这一机制的使用。
+
+5．内核可以使用 netlink 首先发起会话，但系统调用和 ioctl 只能由用户应用发起调用。
+
+6．netlink 使用标准的 socket API，因此很容易使用，但系统调用和 ioctl则需要专门的培训才能使用。
+
+
+/lib/modules/3.10.0+/build/include/uapi/linux/netlink.h:#define NETLINK_USERSOCK        2       /* Reserved for user mode socket protocols      */
+/lib/modules/3.10.0+/build/include/uapi/linux/if_ether.h:#define ETH_P_ALL      0x0003          /* Every packet (be careful!!!) */
+grep: /lib/modules/3.10.0+/build/include/asm: No such file or directory
+
+http://blog.csdn.net/liuxd3000/article/details/23761663
+
+/lib/modules/3.10.0+/build/include/net/cfg80211.h
+wiphy_register 
+
+cfg80211_ops by cfg80211 moudle
+
+wlan_hdd_cfg80211_ops -- function array
+
+
+register_netdevice(pWlanDev) -- datapath is net_device
+
+// function pointer
+static struct net_device_ops wlan_drv_ops
+static const iw_handler      we_handler[]
+static const iw_handler we_private[] = {
+wlan_hdd_cfg80211_ops
+
+netif_rx_ni
+
+file /sbin/init   用来查看系统32 or 64 bit
+
+vsftp to use ftp as file transfer
