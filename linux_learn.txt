@@ -676,5 +676,26 @@ replace firmware in /lib/firmware, and insmod in linux enviorment. done. OK!
 
 step 2, setup git enviorment
 
+Done. Should use git before first build. 
+Add ignore file can make git after build finished.
+
+Tiger captured LE logs. which confirm our expecation
+
+Step3 :  check FW bundle, possilbe to add debug message.
+How to enable fw log in linux?
+
+Look at ini config file, we can see how to enable
+
+Rx bundle
+
+   1. receive message,  get max bundle rx
+
+12/30
+
+USB bundle doesn't set flag
+Max bundle number is 8
+need more to make package bundled
+
+
 
 
