@@ -771,3 +771,11 @@ netif_rx_ni
 file /sbin/init   用来查看系统32 or 64 bit
 
 vsftp to use ftp as file transfer
+
+1/7
+
+dmidecode | grep "Product Name" can check platform modle name
+cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c  can check CPU info
+
+lsusb can check usb port 2.0 or 3.0
+
