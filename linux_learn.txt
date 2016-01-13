@@ -636,9 +636,9 @@ Ok, tushare is running now...
 
 KMSpico win10 office 2013 active solution tool
 
-<<<<<<< HEAD
+
 12/22
-=======
+
 12/27
 
 How to insall chinese language in ubuntu 14.04
@@ -772,10 +772,33 @@ file /sbin/init   用来查看系统32 or 64 bit
 
 vsftp to use ftp as file transfer
 
+
 1/7
 
 dmidecode | grep "Product Name" can check platform modle name
 cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c  can check CPU info
 
 lsusb can check usb port 2.0 or 3.0
+
+=======
+1-7 
+
+upgrade and check tushare version
+pip install tushare --upgrade
+import tushare
+print(tushare.__version__)
+
+
+USB1.1 12Mbps 
+USB2.0 480Mbps
+USB3.0 5Gbps
+
+USB2.0 real test data is 30MB/s, aka 240Mbps
+
+微软目前放出一个补丁来提高USB设备的访问速度，由于它是一个HotFix热修复补丁，并没有作为常规补丁随系统自动更新，因此我们平时也就体会不到它的作用，那么我们可以自己来手动下载安装。
+Windows6.1-KB2581464
+
+USB2.0的最高传输速率为480Mbps，即60MB/s。不过，大家要注意这是理论传输值，如果几台设备共用一个USB通道，主控制芯片会对每台设备可支配的带宽进行分配、控制。如在USB1.1中，所有设备只能共享1.5MB/s的带宽。如果单一的设备占用USB接口所有带宽的话，就会给其他设备的使用带来困难。
+
+why can't we try win10?
 
