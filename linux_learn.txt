@@ -802,3 +802,11 @@ USB2.0µÄ×î¸ß´«ÊäËÙÂÊÎª480Mbps£¬¼´60MB/s¡£²»¹ı£¬´ó¼ÒÒª×¢ÒâÕâÊÇÀíÂÛ´«ÊäÖµ£¬Èç¹û¼¸Ì
 
 why can't we try win10?
 
+1-13
+
+use usb_disable_lpm bus_to_hcd to change caps
+
+XHC_LPM_SUPPORT
+
+/include/linux/usb/hcd.h
+/drivers/usb/host/xhci-pci.c
